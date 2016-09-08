@@ -1,0 +1,24 @@
+{
+  "name": "az-iot-bi",
+  "version": "0.0.1",
+  "description": "Business Intelligence API for Azure IoT Happy Path",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Azure",
+    "IoT",
+    "BI"
+  ],
+  "author": "Microsoft Corporation",
+  "license": "MIT",
+  "dependencies": {
+    "applicationinsights": "^0.15.18",
+    "crypto": "0.0.3",
+    "macaddress": "^0.2.4",
+    "pkginfo": "^0.4.0",
+    "readline-sync": "^1.4.4",
+    "user-home": "^2.0.0"
+  }
+}
