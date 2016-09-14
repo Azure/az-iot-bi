@@ -7,11 +7,15 @@ var settings = require('./lib/settings.js');
 var os = require('os');
 var getmacs = require('macaddress');
 
-var moduleInfo = require('pkginfo')(module, 'version');
-var parentModuleInfo = {};
+// retrieve package info and parent package info
+require('pkginfo')(module, 'version');
 if (module.parent) {
-  parentModuleInfo = require('pkginfo')(module.parent, 'name', 'version');
+  require('pkginfo')(module.parent, 'name', 'version');
 }
+
+var currentPkgVersion = module.exports.version || '';
+var parentPkgName = module.parent && module.parent.exports.name ? module.parent.exports.name : '';
+var parentPkgVersion = module.parent && module.parent.exports.version ? module.parent.exports.version : '';
 
 var bi = {
   _isStarted: false
@@ -73,9 +77,9 @@ bi.trackEvent = function (eventName, properties) {
   }
 
   // Add common properties
-  properties.parentModuleName = parentModuleInfo.name || '';
-  properties.parentModuleVersion = parentModuleInfo.version || '';
-  properties.packageVersion = moduleInfo.version;
+  properties.parentModuleName = parentPkgName;
+  properties.parentModuleVersion = parentPkgVersion;
+  properties.packageVersion = currentPkgVersion;
   properties.nodeVersion = process.version;
   properties.osArch = os.arch();
   properties.hostname = os.hostname();
