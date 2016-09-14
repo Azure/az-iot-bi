@@ -1,6 +1,6 @@
 {
   "name": "az-iot-bi",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Business Intelligence API for Azure IoT Happy Path",
   "main": "index.js",
   "scripts": {
