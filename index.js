@@ -44,6 +44,12 @@ function getSubscriptionId() {
 
 bi.start = function () {
   if (!config.instrumentationKey) {
+    console.error('No instrumentation key found. Fail to start az-iot-bi.');
+    return false;
+  }
+
+  if (process.env.TEST) {
+    console.log('process.env.TEST is found to be set. Do not start az-iot-bi for test environment.');
     return false;
   }
 
