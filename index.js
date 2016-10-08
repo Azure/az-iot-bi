@@ -30,13 +30,15 @@ function hasValidMacProperty(obj, key) {
     obj[key].mac != '00:00:00:00:00:00';
 }
 
-function getSubscriptionId() {
+function getSubscriptionAndTenantId() {
   var profile = settings.readProfile();
   if (profile.subscriptions && profile.subscriptions.constructor === Array && profile.subscriptions.length > 0) {
     var subs = profile.subscriptions;
     for (var i = 0; i < subs.length; i++) {
       if (subs[i].hasOwnProperty('isDefault') && subs[i].isDefault === true) {
-        return subs[i].id;
+        cacheObj.subscriptionId = subs[i].id;
+        cacheObj.tenantId = subs[i].tenantId;
+        return;
       }
     }
   }
@@ -59,16 +61,9 @@ bi.start = function () {
       .setAutoCollectConsole(false)
       .setAutoCollectExceptions(false)
       .setAutoCollectPerformance(false)
-      .setAutoCollectRequests(false);
-    // TODO:
-    // Only in offline mode, failed events will be cached.
-    // But offline mode will pause 60 seconds to send failed events.
-    // The waiting interval is hard coded now.
-    // PR https://github.com/Microsoft/ApplicationInsights-node.js/pull/116 
-    // is to make the resend interval configurable.
-    // Disable offline mode for now until above PR is merged and released.
-    appInsight.setOfflineMode(false);
-    appInsight.start();
+      .setAutoCollectRequests(false)
+      .setOfflineMode(true, 1)
+      .start();
     bi._isStarted = true;
     return true;
   }
@@ -95,9 +90,10 @@ bi.trackEvent = function (eventName, properties) {
 
   // Add subscription Id
   if (!cacheObj.subscriptionId) {
-    cacheObj.subscriptionId = getSubscriptionId();
+    getSubscriptionAndTenantId();
   }
   properties.subscriptionId = cacheObj.subscriptionId || '';
+  properties.tenantId = cacheObj.tenantId || '';
 
   // Add MAC addresses
   if (cacheObj.mac) {
