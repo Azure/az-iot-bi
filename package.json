@@ -20,5 +20,9 @@
     "pkginfo": "^0.4.0",
     "readline-sync": "^1.4.4",
     "user-home": "^2.0.0"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-eslint": "^3.0.1"
   }
 }
