@@ -72,13 +72,25 @@ bi.start = function () {
   return false;
 };
 
-bi.trackEvent = function (eventName, properties) {
-  if (!bi._isStarted) return;
-
-  if (!properties) {
-    properties = {};
+function setMacCache(allMacs) {
+  cacheObj.mac = [];
+  for (var key in allMacs) {
+    if (hasValidMacProperty(allMacs, key)) {
+      // TODO:
+      // Use MD5 for now. Will align with Azure-CLI later.
+      var md5sum = crypto.createHash('md5');
+      md5sum.update(allMacs[key].mac);
+      cacheObj.mac.push(md5sum.digest('hex'));
+    }
   }
+}
 
+function setOsDistroCache(osDistro) {
+  cacheObj.osDist = osDistro.dist;
+  cacheObj.osRelease = osDistro.release;
+}
+
+function internalTrackEvent(eventName, properties) {
   // Add common properties
   properties.parentModuleName = parentPkgName;
   properties.parentModuleVersion = parentPkgVersion;
@@ -87,46 +99,61 @@ bi.trackEvent = function (eventName, properties) {
   properties.osArch = os.arch();
   properties.hostname = os.hostname();
   properties.osType = os.type();
-
-  // Add subscription Id
-  if (!cacheObj.subscriptionId) {
-    getSubscriptionAndTenantId();
-  }
+  // Add subscription Id & tenant Id
   properties.subscriptionId = cacheObj.subscriptionId || '';
   properties.tenantId = cacheObj.tenantId || '';
+  // Add MAC
+  properties.mac = cacheObj.mac || [];
+  // Add OS Distro
+  properties.osPlatform = cacheObj.osDist || os.platform();
+  properties.osRelease = cacheObj.osRelease || os.release();
+  appInsight.client.trackEvent(eventName, properties);
+}
 
-  // Add MAC addresses
-  if (cacheObj.mac) {
-    properties.mac = cacheObj.mac;
-    appInsight.client.trackEvent(eventName, properties);
+bi.trackEvent = function (eventName, properties) {
+  if (!bi._isStarted) return;
+  if (!properties) {
+    properties = {};
+  }
+
+  if (!cacheObj.subscriptionId || !cacheObj.tenantId) {
+    getSubscriptionAndTenantId();
+  }
+
+  var dummyFunc = function() {};
+  // Add MAC addresses & OS distro
+  if (cacheObj.mac && cacheObj.osDist && cacheObj.osRelease) {
+    internalTrackEvent(eventName, properties);
+  } else if (cacheObj.mac) {
+    getos().then(function (osDistro) {
+      if (!cacheObj.osDist || !cacheObj.osRelease) {
+        setOsDistroCache(osDistro)
+      }
+    }).catch(dummyFunc).finally(function () {
+      internalTrackEvent(eventName, properties);
+    });
+  } else if (cacheObj.osDist && cacheObj.osRelease) {
+    getmacs().then(function (allMacs) {
+      if (!cacheObj.mac) {
+        setMacCache(allMacs);
+      }
+    }).catch(dummyFunc).finally(function () {
+      internalTrackEvent(eventName, properties);
+    });
   } else {
     getmacs().then(function (allMacs) {
       if (!cacheObj.mac) {
-        cacheObj.mac = [];
-        for (var key in allMacs) {
-          if (hasValidMacProperty(allMacs, key)) {
-            // TODO:
-            // Use MD5 for now. Will align with Azure-CLI later.
-            var md5sum = crypto.createHash('md5');
-            md5sum.update(allMacs[key].mac);
-            cacheObj.mac.push(md5sum.digest('hex'));
-          }
-        }
+        setMacCache(allMacs);
       }
       return getos();
     }).catch(function () {
       return getos();
-    }).then(function (osDistInfo) {
-      if (!cacheObj.osDist || !cacheObj.osCodename || !cacheObj.osRelease) {
-        cacheObj.osDist = osDistInfo.dist;
-        cacheObj.osCodename = osDistInfo.codename;
-        cacheObj.osRelease = osDistInfo.release;
+    }).then(function (osDistro) {
+      if (!cacheObj.osDist || !cacheObj.osRelease) {
+        setOsDistroCache(osDistro);
       }
-    }).finally(function () {
-      properties.mac = cacheObj.mac || [];
-      properties.osPlatform = cacheObj.osDist || os.platform();
-      properties.osRelease = cacheObj.osRelease || os.release();
-      appInsight.client.trackEvent(eventName, properties);
+    }).catch(dummyFunc).finally(function () {
+      internalTrackEvent(eventName, properties);
     });
   }
 };
@@ -135,8 +162,5 @@ bi.flush = function () {
   if (!bi._isStarted) return;
   appInsight.client.sendPendingData();
 }
-
-bi.start();
-bi.trackEvent('test-event');
 
 module.exports = bi;
