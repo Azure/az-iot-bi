@@ -5,7 +5,9 @@ var crypto = require('crypto');
 var appInsight = require('applicationinsights');
 var settings = require('./lib/settings.js');
 var os = require('os');
-var getmacs = require('macaddress');
+var promise = require('bluebird');
+var getos = promise.promisify(require('getos'));
+var getmacs = promise.promisify(require('macaddress').all);
 
 // retrieve package info and parent package info
 require('pkginfo')(module, 'version');
@@ -84,8 +86,6 @@ bi.trackEvent = function (eventName, properties) {
   properties.nodeVersion = process.version;
   properties.osArch = os.arch();
   properties.hostname = os.hostname();
-  properties.osPlatform = os.platform();
-  properties.osRelease = os.release();
   properties.osType = os.type();
 
   // Add subscription Id
@@ -100,20 +100,32 @@ bi.trackEvent = function (eventName, properties) {
     properties.mac = cacheObj.mac;
     appInsight.client.trackEvent(eventName, properties);
   } else {
-    getmacs.all(function (err, all) {
-      if (!err && !cacheObj.mac) {
+    getmacs().then(function (allMacs) {
+      if (!cacheObj.mac) {
         cacheObj.mac = [];
-        for (var key in all) {
-          if (hasValidMacProperty(all, key)) {
+        for (var key in allMacs) {
+          if (hasValidMacProperty(allMacs, key)) {
             // TODO:
             // Use MD5 for now. Will align with Azure-CLI later.
             var md5sum = crypto.createHash('md5');
-            md5sum.update(all[key].mac);
+            md5sum.update(allMacs[key].mac);
             cacheObj.mac.push(md5sum.digest('hex'));
           }
         }
       }
+      return getos();
+    }).catch(function () {
+      return getos();
+    }).then(function (osDistInfo) {
+      if (!cacheObj.osDist || !cacheObj.osCodename || !cacheObj.osRelease) {
+        cacheObj.osDist = osDistInfo.dist;
+        cacheObj.osCodename = osDistInfo.codename;
+        cacheObj.osRelease = osDistInfo.release;
+      }
+    }).finally(function () {
       properties.mac = cacheObj.mac || [];
+      properties.osPlatform = cacheObj.osDist || os.platform();
+      properties.osRelease = cacheObj.osRelease || os.release();
       appInsight.client.trackEvent(eventName, properties);
     });
   }
@@ -123,5 +135,8 @@ bi.flush = function () {
   if (!bi._isStarted) return;
   appInsight.client.sendPendingData();
 }
+
+bi.start();
+bi.trackEvent('test-event');
 
 module.exports = bi;
