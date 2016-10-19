@@ -15,7 +15,7 @@
   "license": "MIT",
   "dependencies": {
     "applicationinsights": "^0.16.0",
-    "bluebird": "^3.4.6",
+    "async": "^2.1.2",
     "crypto": "0.0.3",
     "execa": "^0.5.0",
     "getos": "^2.8.2",
