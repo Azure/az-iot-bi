@@ -26,12 +26,14 @@ describe('lib/utils', function () {
       var inputObj = {
         prop1: 'This property contains apple@boy.cat for testing.',
         prop2: 'This property contains 0.0.0.0 and 10.11.12.13 and 255.255.255.255 and 999.999.999.999 for testing.',
-        prop3: 'This property contains no PII.'
+        prop3: 'This property contains no PII.',
+        prop4: 1234
       };
       var expectedResult = {
         prop1: 'This property contains [Email Address] for testing.',
         prop2: 'This property contains [IP Address] and [IP Address] and [IP Address] and 999.999.999.999 for testing.',
-        prop3: 'This property contains no PII.'
+        prop3: 'This property contains no PII.',
+        prop4: 1234
       };
       var actualResult = utils.sanitizePII(inputObj)
       assert.deepEqual(expectedResult, actualResult);
