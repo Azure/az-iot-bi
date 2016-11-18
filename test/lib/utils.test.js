@@ -33,7 +33,7 @@ describe('lib/utils', function () {
         prop2: 'This property contains [IP Address] and [IP Address] and [IP Address] and 999.999.999.999 for testing.',
         prop3: 'This property contains no PII.'
       };
-      var actualResult = utils.santizePII(inputObj)
+      var actualResult = utils.sanitizePII(inputObj)
       assert.deepEqual(expectedResult, actualResult);
     });
   });
