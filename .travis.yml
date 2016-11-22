@@ -1,0 +1,26 @@
+language: node_js
+node_js:
+  - "6"
+  
+before_script:
+  - npm install
+  
+script: npm test
+    
+notifications:
+  email:
+    on_success: change
+    on_failure: always
+    recipients:
+        - antono@microsoft.com
+        - yungez@microsoft.com
+        - zhijzhao@microsoft.com
+        - kevinzha@microsoft.com
+        - yaozheng@microsoft.com
+        - yaweiw@microsoft.com
+        - yuwzho@microsoft.com
+        - reyang@microsoft.com
+        - zikalino@microsoft.com
+  
+matrix:
+  fast_finish: true
