@@ -19,7 +19,7 @@
   "author": "Microsoft Corporation",
   "license": "MIT",
   "dependencies": {
-    "applicationinsights": "^0.16.0",
+    "applicationinsights": "^0.17.0",
     "async": "^2.1.2",
     "crypto": "0.0.3",
     "execa": "^0.5.0",
