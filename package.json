@@ -3,8 +3,13 @@
   "version": "0.1.9",
   "description": "Business Intelligence API for Azure IoT Happy Path",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/azure/az-iot-bi.git"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pretest": "gulp lint",
+    "test": "node ./node_modules/mocha/bin/mocha ./test --recursive"
   },
   "keywords": [
     "Azure",
@@ -14,7 +19,7 @@
   "author": "Microsoft Corporation",
   "license": "MIT",
   "dependencies": {
-    "applicationinsights": "^0.16.0",
+    "applicationinsights": "^0.17.0",
     "async": "^2.1.2",
     "crypto": "0.0.3",
     "execa": "^0.5.0",
@@ -26,6 +31,8 @@
   },
   "devDependencies": {
     "gulp": "^3.9.1",
-    "gulp-eslint": "^3.0.1"
+    "gulp-eslint": "^3.0.1",
+    "mocha": "^3.1.2",
+    "sinon": "^1.17.6"
   }
 }
