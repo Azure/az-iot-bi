@@ -15,34 +15,34 @@ describe('lib/appInsightsWrapper', function () {
   describe('#start()', function () {
     it('should start Application Insights and set internal flag to be true.', function () {
       var isBIEnabledStub = sinon.stub(settings, 'isBIEnabled', () => true);
-      var aiSetupStub = sinon.stub(appInsight, 'setup', () => appInsight);
-      var aiSetAutoCollectConsoleStub = sinon.stub(appInsight, 'setAutoCollectConsole', () => appInsight);
-      var aiSetAutoCollectExceptionsStub = sinon.stub(appInsight, 'setAutoCollectExceptions', () => appInsight);
-      var aiSetAutoCollectPerformanceStub = sinon.stub(appInsight, 'setAutoCollectPerformance', () => appInsight);
-      var aiSetAutoCollectRequestsStub = sinon.stub(appInsight, 'setAutoCollectRequests', () => appInsight);
-      var aiSetOfflineModeStub = sinon.stub(appInsight, 'setOfflineMode', () => appInsight);
-      var aiStartStub = sinon.stub(appInsight, 'start', () => appInsight);
+      sinon.spy(appInsight, 'setup');
+      sinon.spy(appInsight, 'setAutoCollectConsole');
+      sinon.spy(appInsight, 'setAutoCollectExceptions');
+      sinon.spy(appInsight, 'setAutoCollectPerformance');
+      sinon.spy(appInsight, 'setAutoCollectRequests');
+      sinon.spy(appInsight, 'setOfflineMode');
+      sinon.spy(appInsight, 'start');
 
-      assert.ok(wrapper.start());
+      assert.ok(wrapper.start(config.instrumentationKey));
       assert.ok(wrapper.isStarted());
 
       sinon.assert.calledOnce(isBIEnabledStub);
-      sinon.assert.calledOnce(aiSetupStub);
-      sinon.assert.calledOnce(aiSetAutoCollectConsoleStub);
-      sinon.assert.calledOnce(aiSetAutoCollectExceptionsStub);
-      sinon.assert.calledOnce(aiSetAutoCollectPerformanceStub);
-      sinon.assert.calledOnce(aiSetAutoCollectRequestsStub);
-      sinon.assert.calledOnce(aiSetOfflineModeStub);
-      sinon.assert.calledOnce(aiStartStub);
+      assert.ok(appInsight.setup.calledOnce);
+      assert.ok(appInsight.setAutoCollectConsole.calledOnce);
+      assert.ok(appInsight.setAutoCollectExceptions.calledOnce);
+      assert.ok(appInsight.setAutoCollectPerformance.calledOnce);
+      assert.ok(appInsight.setAutoCollectRequests.calledOnce);
+      assert.ok(appInsight.setOfflineMode.calledOnce);
+      assert.ok(appInsight.start.calledOnce);
 
       isBIEnabledStub.restore();
-      aiSetupStub.restore();
-      aiSetAutoCollectConsoleStub.restore();
-      aiSetAutoCollectExceptionsStub.restore();
-      aiSetAutoCollectPerformanceStub.restore();
-      aiSetAutoCollectRequestsStub.restore();
-      aiSetOfflineModeStub.restore();
-      aiStartStub.restore();
+      appInsight.setup.restore();
+      appInsight.setAutoCollectConsole.restore();
+      appInsight.setAutoCollectExceptions.restore();
+      appInsight.setAutoCollectPerformance.restore();
+      appInsight.setAutoCollectRequests.restore();
+      appInsight.setOfflineMode.restore();
+      appInsight.start.restore();
     });
   });
 
