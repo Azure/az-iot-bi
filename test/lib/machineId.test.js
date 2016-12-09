@@ -9,15 +9,15 @@ var execa = require('execa');
 
 describe('lib/machineId', function () {
   describe('#default', function () {
-    it('should return SHA256 hash value of hostname and username', function () {
+    it('should return SHA256 hash value of hostname and username', sinon.test(function () {
       var env = process.env;
       env.LOGNAME = '';
       env.USER = '';
       env.LNAME = '';
       env.USERNAME = '';
 
-      var osStub = sinon.stub(os, 'hostname', () => 'hostname-for-test');
-      var execaStub = sinon.stub(execa, 'sync', () => { return { stdout: 'username_0' }; });
+      this.stub(os, 'hostname', () => 'hostname-for-test');
+      this.stub(execa, 'sync', () => { return { stdout: 'username_0' }; });
 
       // SHA256 hash of 'hostname-for-test' + 'username_0'
       var expectedResult = 'cff056f58e63111ac6fbd0c03821a757073d48d28a18ff851d88e2638333ca8d';
@@ -42,9 +42,6 @@ describe('lib/machineId', function () {
       // SHA256 hash of 'hostname-for-test' + 'username_4'
       expectedResult = 'fb4ffb2f905927fd999c6591dace0d2638e7227a1040a076108b603b21639bc9';
       assert.equal(expectedResult, machineId());
-
-      osStub.restore();
-      execaStub.restore();
-    });
+    }));
   });
 });

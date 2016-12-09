@@ -13,15 +13,15 @@ var config = require('../../config.json');
 
 describe('lib/appInsightsWrapper', function () {
   describe('#start()', function () {
-    it('should start Application Insights and set internal flag to be true.', function () {
-      var isBIEnabledStub = sinon.stub(settings, 'isBIEnabled', () => true);
-      sinon.spy(appInsight, 'setup');
-      sinon.spy(appInsight, 'setAutoCollectConsole');
-      sinon.spy(appInsight, 'setAutoCollectExceptions');
-      sinon.spy(appInsight, 'setAutoCollectPerformance');
-      sinon.spy(appInsight, 'setAutoCollectRequests');
-      sinon.spy(appInsight, 'setOfflineMode');
-      sinon.spy(appInsight, 'start');
+    it('should start Application Insights and set internal flag to be true.', sinon.test(function () {
+      var isBIEnabledStub = this.stub(settings, 'isBIEnabled', () => true);
+      this.spy(appInsight, 'setup');
+      this.spy(appInsight, 'setAutoCollectConsole');
+      this.spy(appInsight, 'setAutoCollectExceptions');
+      this.spy(appInsight, 'setAutoCollectPerformance');
+      this.spy(appInsight, 'setAutoCollectRequests');
+      this.spy(appInsight, 'setOfflineMode');
+      this.spy(appInsight, 'start');
 
       assert.ok(wrapper.start(config.instrumentationKey));
       assert.ok(wrapper.isStarted());
@@ -34,25 +34,16 @@ describe('lib/appInsightsWrapper', function () {
       assert.ok(appInsight.setAutoCollectRequests.calledOnce);
       assert.ok(appInsight.setOfflineMode.calledOnce);
       assert.ok(appInsight.start.calledOnce);
-
-      isBIEnabledStub.restore();
-      appInsight.setup.restore();
-      appInsight.setAutoCollectConsole.restore();
-      appInsight.setAutoCollectExceptions.restore();
-      appInsight.setAutoCollectPerformance.restore();
-      appInsight.setAutoCollectRequests.restore();
-      appInsight.setOfflineMode.restore();
-      appInsight.start.restore();
-    });
+    }));
   });
 
   describe('#trackEvent(eventName, properties)', function () {
-    it('should send event to Application Insights.', function () {
-      var osArchStub = sinon.stub(os, 'arch', () => 'fakeArch');
-      var osTypeStub = sinon.stub(os, 'type', () => 'fakeType');
-      var osPlatformStub = sinon.stub(os, 'platform', () => 'fakePlatform');
-      var osReleaseStub = sinon.stub(os, 'release', () => 'fakeRelease');
-      var getmacStub = sinon.stub(getmacs, 'all', (callback) => callback(null, {
+    it('should send event to Application Insights.', sinon.test(function () {
+      this.stub(os, 'arch', () => 'fakeArch');
+      this.stub(os, 'type', () => 'fakeType');
+      this.stub(os, 'platform', () => 'fakePlatform');
+      this.stub(os, 'release', () => 'fakeRelease');
+      var getmacStub = this.stub(getmacs, 'all', (callback) => callback(null, {
         mac1: { 
           mac: '00:00:00:00:00:00' 
         }, 
@@ -63,8 +54,8 @@ describe('lib/appInsightsWrapper', function () {
       wrapper.start(config.instrumentationKey);
 
       var client = appInsight.client;
-      var trackEventStub = sinon.stub(client, 'trackEvent', () => null);
-      var sendPendingDataStub = sinon.stub(client, 'sendPendingData', () => null);
+      var trackEventStub = this.stub(client, 'trackEvent', () => null);
+      var sendPendingDataStub = this.stub(client, 'sendPendingData', () => null);
 
       wrapper.trackEvent('test-event');
 
@@ -86,26 +77,16 @@ describe('lib/appInsightsWrapper', function () {
       assert.ok(eventProperties['osPlatform']);
       assert.ok(eventProperties['osRelease']);
       assert.deepEqual(['845e2e0f73cece6f0ab64cb3118ca724'], eventProperties['mac']);
-
-      osArchStub.restore();
-      osTypeStub.restore();
-      osPlatformStub.restore();
-      osReleaseStub.restore();
-      getmacStub.restore();
-      trackEventStub.restore();
-      sendPendingDataStub.restore();
-    });
+    }));
   });
 
   describe('#sendPendingData()', function () {
-    it('should send pending events to Application Insights.', function () {
+    it('should send pending events to Application Insights.', sinon.test(function () {
       wrapper.start(config.instrumentationKey);
-      var sendPendingDataStub = sinon.stub(appInsight.client, 'sendPendingData', () => null);
+      var sendPendingDataStub = this.stub(appInsight.client, 'sendPendingData', () => null);
 
       wrapper.sendPendingData();
       sinon.assert.calledOnce(sendPendingDataStub);
-
-      sendPendingDataStub.restore();
-    });
+    }));
   });
 });
