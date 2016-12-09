@@ -29,7 +29,7 @@ describe('lib/utils', function () {
         prop3: 'This property contains no PII.',
         prop4: 1234,
         prop5: 'This property contains HostName=iot-hub.azure-devices.net;DeviceId=test-device;SharedAccessKeyName=iothubowner;SharedAccessKey=yJg53nhMLEjLq66z8+VcP82/UgGoY5abcdefQSuB9NnE for testing.', // eslint-disable-line
-        prop6: 'This property contains [Fake/Home/Folder] for testing.'
+        prop6: 'This property contains [Fake/Home/Folder] and another [Fake/Home/Folder] for testing.'
       };
       var expectedResult = {
         prop1: 'This property contains [Email Address] for testing.',
@@ -37,7 +37,7 @@ describe('lib/utils', function () {
         prop3: 'This property contains no PII.',
         prop4: 1234,
         prop5: 'This property contains [Host Name];[Device Id];[Shared Access Policy];[Shared Access Key] for testing.',
-        prop6: 'This property contains [Home Folder] for testing.'
+        prop6: 'This property contains [Home Folder] and another [Home Folder] for testing.'
       };
 
       var oldUserProfile = process.env['USERPROFILE'];
