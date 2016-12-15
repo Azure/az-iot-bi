@@ -39,6 +39,7 @@ describe('lib/appInsightsWrapper', function () {
 
   describe('#trackEvent(eventName, properties)', function () {
     it('should send event to Application Insights.', sinon.test(function () {
+      this.stub(settings, 'isBIEnabled', () => true);
       this.stub(os, 'arch', () => 'fakeArch');
       this.stub(os, 'type', () => 'fakeType');
       this.stub(os, 'platform', () => 'fakePlatform');
@@ -82,6 +83,7 @@ describe('lib/appInsightsWrapper', function () {
 
   describe('#sendPendingData()', function () {
     it('should send pending events to Application Insights.', sinon.test(function () {
+      this.stub(settings, 'isBIEnabled', () => true);
       wrapper.start(config.instrumentationKey);
       var sendPendingDataStub = this.stub(appInsight.client, 'sendPendingData', () => null);
 
