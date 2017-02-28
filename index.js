@@ -4,7 +4,7 @@ var config = require('./config.json');
 var wrapper = require('./lib/appInsightsWrapper.js');
 var bi = {};
 
-bi.start = function (skipCheck) {
+bi.start = function (skipCheck, userBiSettingDir) {
   if (!config.instrumentationKey) {
     console.error('No instrumentation key found. Failed to start az-iot-bi.');
     return false;
@@ -13,7 +13,7 @@ bi.start = function (skipCheck) {
     console.log('process.env.TEST is found. Do not start az-iot-bi for test environment.');
     return false;
   }
-  return wrapper.start(config.instrumentationKey, skipCheck);
+  return wrapper.start(config.instrumentationKey, skipCheck, userBiSettingDir);
 };
 
 bi.trackEvent = function (eventName, properties) {
