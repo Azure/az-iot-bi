@@ -77,7 +77,7 @@ describe('lib/appInsightsWrapper', function () {
       assert.equal('fakeType', eventProperties['osType']);
       assert.ok(eventProperties['osPlatform']);
       assert.ok(eventProperties['osRelease']);
-      assert.deepEqual(['845e2e0f73cece6f0ab64cb3118ca724'], eventProperties['mac']);
+      assert.deepEqual(['568f198f2be672a1f5f38cae7f04ae341eb8efdd031d3b2c7c36ae7fcc5606df'], eventProperties['mac']);
     }));
   });
 
