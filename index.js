@@ -20,8 +20,16 @@ bi.trackEvent = function (eventName, properties) {
   wrapper.trackEvent(eventName, properties);
 };
 
+bi.trackEventWithoutInternalProperties = function (eventName, properties) {
+  wrapper.trackEventWithoutInternalProperties(eventName, properties);
+};
+
 bi.flush = function () {
   wrapper.sendPendingData();
-}
+};
+
+bi.isBIEnabled = function () {
+  return wrapper.isBIEnabled();
+};
 
 module.exports = bi;
