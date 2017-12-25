@@ -32,4 +32,8 @@ bi.isBIEnabled = function () {
   return wrapper.isBIEnabled();
 };
 
+bi.disableRecordingClientIP = function() {
+  wrapper.disableRecordingClientIP();
+}
+
 module.exports = bi;
